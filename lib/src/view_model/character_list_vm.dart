@@ -3,7 +3,7 @@ import 'package:marvel_universe_app/src/data/remote/response/api_response.dart';
 import 'package:marvel_universe_app/src/model/character_list/character_list.dart';
 import 'package:marvel_universe_app/src/repository/character_repo.dart';
 
-class CharacterListVM extends ChangeNotifier {
+class CharacterListVM with ChangeNotifier {
   final CharacterRepo _repository = CharacterRepo();
 
   ApiResponse<CharacterList> _characters = ApiResponse.loading();

@@ -8,11 +8,12 @@ import '../model/character_list/character_list.dart';
 
 class CharacterRepo {
   final BaseApiService _apiService = NetworkApiService();
-
+  final ApiEndpoints _apiEndpoints = ApiEndpoints();
   Future<CharacterList> getCharacters() async {
     try {
-      final response = await _apiService
-          .getResponse(ApiEndpoints().getCharacters) as Response;
+      final response = await _apiService.getResponse(
+          _apiEndpoints.getCharacters(39, 4) +
+              _apiEndpoints.getAuthEndPoint()) as Response;
       debugPrint("$response");
       return CharacterList.fromJson(response.data);
     } catch (e) {

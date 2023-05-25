@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:marvel_universe_app/src/data/network/base_api_service.dart';
+import 'package:marvel_universe_app/src/data/remote/network/base_api_service.dart';
 import 'package:dio/dio.dart';
 
-import '../app_exceptions.dart';
+import '../../app_exceptions.dart';
 
 class NetworkApiService extends BaseApiService {
   final _client = Dio();
@@ -20,7 +20,7 @@ class NetworkApiService extends BaseApiService {
     return responseJson;
   }
 
-  dynamic returnResponse(Response response) {
+  Response returnResponse(Response response) {
     switch (response.statusCode) {
       case 200:
         dynamic responseJson = response.statusCode;

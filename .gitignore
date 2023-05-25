@@ -27,3 +27,4 @@ doc/api/
 .flutter-plugins-dependencies
 
 /assets/config.json
+/lib/src/data/localdb/apikey.dart

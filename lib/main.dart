@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
             seedColor: Colors.blueGrey, brightness: Brightness.dark),
         scaffoldBackgroundColor: Colors.black,
       ),
-      home: HomeView(),
+      home: const HomeView(),
     );
   }
 }

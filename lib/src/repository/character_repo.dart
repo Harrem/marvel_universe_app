@@ -12,12 +12,13 @@ class CharacterRepo {
   Future<CharacterList> getCharacters() async {
     try {
       final response = await _apiService.getResponse(
-          _apiEndpoints.getCharacters(39, 4) +
-              _apiEndpoints.getAuthEndPoint()) as Response;
-      debugPrint("$response");
-      return CharacterList.fromJson(response.data);
+          _apiEndpoints.getCharacters(39, 6) +
+              _apiEndpoints.getAuthEndPoint()) as Response<dynamic>;
+      // debugPrint("response is of type ${response.data}");
+      return CharacterList.fromMap(
+          response.data['data'] as Map<String, dynamic>);
     } catch (e) {
-      debugPrint("$e");
+      debugPrint("Got error in Repo $e");
       rethrow;
     }
   }

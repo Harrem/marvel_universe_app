@@ -23,7 +23,7 @@ class ApiEndpoints {
 
   String getAuthEndPoint() {
     String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    String hash = MD5.encrypt(timeStamp, ApiKeyPrivate, ApiKeyPublic);
-    return 'ts=$timeStamp&apikey=$ApiKeyPublic&hash=$hash';
+    String hash = MD5.encrypt(timeStamp, apiKeyPrivate, apiKeyPublic);
+    return 'ts=$timeStamp&apikey=$apiKeyPublic&hash=$hash';
   }
 }

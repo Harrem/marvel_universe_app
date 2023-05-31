@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 import 'result.dart';
 
 class CharacterList {
@@ -22,15 +24,18 @@ class CharacterList {
     return 'CharacterList(offset: $offset, limit: $limit, total: $total, count: $count, results: $results)';
   }
 
-  factory CharacterList.fromMap(Map<String, dynamic> data) => CharacterList(
-        offset: data['offset'] as int?,
-        limit: data['limit'] as int?,
-        total: data['total'] as int?,
-        count: data['count'] as int?,
-        results: (data['results'] as List<dynamic>?)
-            ?.map((e) => Result.fromMap(e as Map<String, dynamic>))
-            .toList(),
-      );
+  factory CharacterList.fromMap(Map<String, dynamic> data) {
+    // var data = initData['data'] as Map<String, dynamic>;
+    return CharacterList(
+      offset: data['offset'] as int?,
+      limit: data['limit'] as int?,
+      total: data['total'] as int?,
+      count: data['count'] as int?,
+      results: (data['results'] as List<dynamic>?)
+          ?.map((e) => Result.fromMap(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
 
   Map<String, dynamic> toMap() => {
         'offset': offset,
@@ -44,7 +49,10 @@ class CharacterList {
   ///
   /// Parses the string and returns the resulting Json object as [CharacterList].
   factory CharacterList.fromJson(String data) {
-    return CharacterList.fromMap(json.decode(data) as Map<String, dynamic>);
+    final str = json.decode(data)['result'];
+    debugPrint("this is me :$str");
+    return CharacterList.fromMap(
+        json.decode(data)['result'] as Map<String, dynamic>);
   }
 
   /// `dart:convert`

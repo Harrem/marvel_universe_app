@@ -17,11 +17,14 @@ class CharacterListVM with ChangeNotifier {
 
   Future<void> loadCharacters() async {
     try {
-      await _repository
-          .getCharacters()
-          .then((value) => _setCharacters(ApiResponse.completed(value)))
-          .onError((error, stackTrace) =>
-              _setCharacters(ApiResponse.error("$error")));
+      await _repository.getCharacters().then((value) {
+        debugPrint("now passing data to ApiResponse and mark it as completed");
+        return _setCharacters(ApiResponse.completed(value));
+      }).onError((error, stackTrace) {
+        debugPrint(
+            "got error while passing data to ApiResponse and mark it as error");
+        _setCharacters(ApiResponse.error("$error"));
+      });
     } catch (e) {
       rethrow;
     }

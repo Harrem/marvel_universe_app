@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:marvel_universe_app/src/data/remote/response/api_response.dart';
-import 'package:marvel_universe_app/src/model/character_list/character_list.dart';
 import 'package:marvel_universe_app/src/view_model/character_list_vm.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,11 +24,21 @@ class HomeView extends ConsumerWidget {
               : ListView.builder(
                   itemCount: value.characters.data!.results!.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
+                    return ExpansionTile(
                       title: Text(value.characters.data!.results![index].name
                           .toString()),
                       subtitle: Text(
                           value.characters.data!.results![index].id.toString()),
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              debugPrint(
+                                  "${value.characters.data!.results![index].thumbnail!.path!}.${value.characters.data!.results![index].thumbnail!.extension!}");
+                            },
+                            child: const Icon(Icons.add)),
+                        Image.network(
+                            "${value.characters.data!.results![index].thumbnail!.path!}.${value.characters.data!.results![index].thumbnail!.extension!}"),
+                      ],
                     );
                   },
                 ),

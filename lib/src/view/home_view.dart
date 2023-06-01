@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marvel_universe_app/src/view_model/character_list_vm.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:marvel_universe_app/src/view_model/comic_vm.dart';
 import '../data/remote/response/status.dart';
 
 final charactersProvider = ChangeNotifierProvider<CharacterListVM>((ref) {
@@ -9,20 +10,25 @@ final charactersProvider = ChangeNotifierProvider<CharacterListVM>((ref) {
   return characterListVM;
 });
 
+final comicProvider = Provider<ComicVM>((ref) {
+  return ComicVM();
+});
+
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final value = ref.watch(charactersProvider);
+    final charProv = ref.watch(charactersProvider);
+    final comicProv = ref.watch(comicProvider);
     return Scaffold(
-      body: value.characters.status == Status.loading
+      body: charProv.characters.status == Status.loading
           ? const Center(
               child: GFShimmer(
               child: Text("loading..."),
             ))
-          : value.characters.status == Status.error
-              ? Center(child: Text(value.characters.message!))
+          : charProv.characters.status == Status.error
+              ? Center(child: Text(charProv.characters.message!))
               : CustomScrollView(slivers: [
                   SliverAppBar(
                     backgroundColor: Colors.blueGrey[900],
@@ -68,14 +74,15 @@ class HomeView extends ConsumerWidget {
                           child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
-                            itemCount: value.characters.data!.results!.length,
+                            itemCount:
+                                charProv.characters.data!.results!.length,
                             itemBuilder: (context, index) => Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: GFAvatar(
                                 radius: 50,
                                 backgroundColor: Colors.blueGrey[900],
                                 backgroundImage: NetworkImage(
-                                  '${value.characters.data!.results![index].thumbnail!.path!}.${value.characters.data!.results![index].thumbnail!.extension!}',
+                                  '${charProv.characters.data!.results![index].thumbnail!.path!}.${charProv.characters.data!.results![index].thumbnail!.extension!}',
                                 ),
                               ),
                             ),
@@ -84,14 +91,14 @@ class HomeView extends ConsumerWidget {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: value.characters.data!.results!.length,
+                          itemCount: charProv.characters.data!.results!.length,
                           itemBuilder: (context, index) {
                             return AspectRatio(
                               aspectRatio: 16 / 9,
                               child: RoundedCardWidget(
                                   imageUrl:
-                                      "${value.characters.data!.results![index].thumbnail!.path!}.${value.characters.data!.results![index].thumbnail!.extension!}",
-                                  title: value
+                                      "${charProv.characters.data!.results![index].thumbnail!.path!}.${charProv.characters.data!.results![index].thumbnail!.extension!}",
+                                  title: charProv
                                       .characters.data!.results![index].name!),
                             );
                           },
@@ -101,8 +108,10 @@ class HomeView extends ConsumerWidget {
                   ),
                 ]),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            value.loadCharacters();
+          onPressed: () async {
+            // charProv.loadCharacters();
+            await comicProv.fetchComics(limit: 59, offset: 0);
+            // debugPrint("${comicProv.comics.data!.results!.length}");
           },
           child: const Icon(Icons.refresh)),
     );

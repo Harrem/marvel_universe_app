@@ -11,14 +11,27 @@ class CharacterRepo {
   final ApiEndpoints _apiEndpoints = ApiEndpoints();
   Future<CharacterList> getCharacters() async {
     try {
-      final response = await _apiService.getResponse(
-          _apiEndpoints.getCharacters(39, 6) +
-              _apiEndpoints.getAuthEndPoint()) as Response<dynamic>;
+      final response = await _apiService
+          .getResponse(_apiEndpoints.getCharacters(39, 6)) as Response<dynamic>;
       // debugPrint("response is of type ${response.data}");
       return CharacterList.fromMap(
           response.data['data'] as Map<String, dynamic>);
     } catch (e) {
       debugPrint("Got error in Repo $e");
+      rethrow;
+    }
+  }
+
+  /// get character by id from api
+  Future<CharacterList> getCharacterById(int id) async {
+    try {
+      final response = await _apiService
+          .getResponse(_apiEndpoints.getCharacterById(id)) as Response<dynamic>;
+      // debugPrint("response is of type ${response.data}");
+      return CharacterList.fromMap(
+          response.data['data'] as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint("Got error in Repo while fetching Character $e");
       rethrow;
     }
   }

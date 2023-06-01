@@ -8,14 +8,12 @@ import '../../app_exceptions.dart';
 
 class NetworkApiService extends BaseApiService {
   final _client = Dio();
-  // final url =
-  //     'https://gateway.marvel.com:443/v1/public/characters?limit=1&ts=1234&apikey=c2031f2a8740ce30bccaf09984c3f122&hash=8c872de752bc49006328642d1ae0946c';
 
   @override
   Future<Response> getResponse(String url) async {
     Response responseJson;
     try {
-      final uri = Uri.parse(baseUrl + url);
+      final uri = Uri.parse(url);
       final response = await _client.getUri(uri);
       responseJson = returnResponse(response);
     } on SocketException {

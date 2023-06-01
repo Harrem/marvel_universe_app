@@ -11,11 +11,14 @@ class ApiEndpoints {
 
   /// Get characters from Marvel API
   String getCharacters(int limit, int offset) =>
-      '$_getCharacters?limit=$limit&offset=$offset&';
+      '$_getCharacters?limit=$limit&offset=$offset&${getAuthEndPoint()}';
 
   /// Get character by id from Marvel API
   String getCharacterById(int id) => '$_getCharacters/$id?';
-  String get getComics => _getComics;
+
+  /// Get comics from Marvel API
+  String getComics(int limit, int offset) =>
+      "$_getComics?limit=$limit&offset=$offset&${getAuthEndPoint()}";
   String get getCreators => _getCreators;
   String get getEvents => _getEvents;
   String get getSeries => _getSeries;

@@ -8,7 +8,7 @@ class Price {
 
   factory Price.fromMap(Map<String, dynamic> data) => Price(
         type: data['type'] as String?,
-        price: data['price'] as double?,
+        price: double.parse(data['price'].toString()),
       );
 
   Map<String, dynamic> toMap() => {

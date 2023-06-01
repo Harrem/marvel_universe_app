@@ -15,7 +15,7 @@ class Result {
   int? id;
   int? digitalId;
   String? title;
-  int? issueNumber;
+  double? issueNumber;
   String? variantDescription;
   String? description;
   String? modified;
@@ -78,7 +78,7 @@ class Result {
         id: data['id'] as int?,
         digitalId: data['digitalId'] as int?,
         title: data['title'] as String?,
-        issueNumber: data['issueNumber'] as int?,
+        issueNumber: double.parse(data['issueNumber'].toString()),
         variantDescription: data['variantDescription'] as String?,
         description: data['description'] as String?,
         modified: data['modified'] as String?,

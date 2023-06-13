@@ -19,6 +19,21 @@ class ComicVM with ChangeNotifier {
     try {
       await _repository.getComics(limit ?? 10, offset ?? 0).then((value) {
         debugPrint("now passing data to ApiResponse and mark it as completed");
+        _setComics(ApiResponse.completed(value));
+      }).onError((error, stackTrace) {
+        debugPrint(
+            "got error while passing data to ApiResponse and mark it as error");
+        _setComics(ApiResponse.error("$error"));
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> fetchComicById(int id) async {
+    try {
+      await _repository.getComicById(id).then((value) {
+        debugPrint("now passing data to ApiResponse and mark it as completed");
         return _setComics(ApiResponse.completed(value));
       }).onError((error, stackTrace) {
         debugPrint(

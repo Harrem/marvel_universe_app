@@ -15,9 +15,14 @@ class CharacterListVM with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadCharacters() async {
+  void setLoading() {
+    _characters = ApiResponse.loading();
+    notifyListeners();
+  }
+
+  Future<void> loadCharacters({int? limit, int? offset}) async {
     try {
-      await _repository.getCharacters().then((value) {
+      await _repository.getCharacters(limit ?? 10, offset ?? 10).then((value) {
         debugPrint("now passing data to ApiResponse and mark it as completed");
         return _setCharacters(ApiResponse.completed(value));
       }).onError((error, stackTrace) {

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:marvel_universe_app/src/data/remote/response/api_response.dart';
 import 'package:marvel_universe_app/src/view_model/character_list_vm.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:marvel_universe_app/src/view_model/comic_vm.dart';
 import '../data/remote/response/status.dart';
+import '../widgets/oval_card.dart';
+import '../widgets/rounded_card_widget.dart';
 
 final charactersProvider = ChangeNotifierProvider<CharacterListVM>((ref) {
   CharacterListVM characterListVM = CharacterListVM();
@@ -65,111 +68,109 @@ class HomeView extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        Container(
-                          // color: Colors.grey[900],
-                          height: 150,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount:
-                                charProv.characters.data!.results!.length,
-                            itemBuilder: (context, index) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GFAvatar(
-                                radius: 50,
-                                backgroundColor: Colors.blueGrey[900],
-                                backgroundImage: NetworkImage(
-                                  '${charProv.characters.data!.results![index].thumbnail!.path!}.${charProv.characters.data!.results![index].thumbnail!.extension!}',
-                                ),
-                              ),
+                  comicProv.comics.status == Status.loading
+                      ? const SliverToBoxAdapter(
+                          child: Center(
+                            child: GFShimmer(
+                              child: Text("loading..."),
                             ),
                           ),
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: charProv.characters.data!.results!.length,
-                          itemBuilder: (context, index) {
-                            return AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: RoundedCardWidget(
-                                  imageUrl:
-                                      "${charProv.characters.data!.results![index].thumbnail!.path!}.${charProv.characters.data!.results![index].thumbnail!.extension!}",
-                                  title: charProv
-                                      .characters.data!.results![index].name!),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                        )
+                      : comicProv.comics.status == Status.error
+                          ? SliverToBoxAdapter(
+                              child: Center(
+                                child: Text(comicProv.comics.message!),
+                              ),
+                            )
+                          : SliverList(
+                              delegate: SliverChildListDelegate(
+                                [
+                                  Container(
+                                    padding: const EdgeInsets.all(20),
+                                    child: const Text(
+                                      "Popular Characters",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Container(
+                                    // color: Colors.grey[900],
+                                    height: 150,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: charProv
+                                          .characters.data!.results!.length,
+                                      itemBuilder: (context, index) => SizedBox(
+                                        // width: 100,
+                                        // height: 100,
+                                        child: OvalCardWidget(
+                                          title: charProv.characters.data!
+                                              .results![index].name!,
+                                          imageUrl:
+                                              '${charProv.characters.data!.results![index].thumbnail!.path!}.${charProv.characters.data!.results![index].thumbnail!.extension!}',
+                                          price: 0.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    child: const Text(
+                                      "Popular Comics",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            childAspectRatio: 0.7,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10),
+                                    itemCount:
+                                        comicProv.comics.data!.results!.length,
+                                    itemBuilder: (context, index) {
+                                      return RoundedCardWidget(
+                                          imageUrl:
+                                              "${comicProv.comics.data!.results![index].thumbnail!.path!}.${comicProv.comics.data!.results![index].thumbnail!.extension!}",
+                                          title: comicProv.comics.data!
+                                              .results![index].title!,
+                                          price: comicProv
+                                              .comics
+                                              .data!
+                                              .results![index]
+                                              .prices![0]
+                                              .price!);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                 ]),
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            // charProv.loadCharacters();
-            await comicProv.fetchComics(limit: 59, offset: 0);
+            charProv.setLoading();
+            await charProv.loadCharacters();
+            await comicProv.fetchComics(limit: 50, offset: 10);
+            // await comicProv.fetchComicById(25857);
             // debugPrint("${comicProv.comics.data!.results!.length}");
           },
           child: const Icon(Icons.refresh)),
-    );
-  }
-}
-
-class RoundedCardWidget extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-
-  const RoundedCardWidget(
-      {super.key, required this.imageUrl, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              // height: double.infinity,
-              width: double.infinity,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.8),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      bottomNavigationBar: BottomNavigationBar(items: [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.search), label: "Comics"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.favorite), label: "Characters"),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Settings"),
+      ]),
     );
   }
 }

@@ -19,6 +19,8 @@ class ApiEndpoints {
   /// Get comics from Marvel API
   String getComics(int limit, int offset) =>
       "$_getComics?limit=$limit&offset=$offset&${getAuthEndPoint()}";
+  String getComicById(int id) => '$_getComics/$id?${getAuthEndPoint()}';
+
   String get getCreators => _getCreators;
   String get getEvents => _getEvents;
   String get getSeries => _getSeries;

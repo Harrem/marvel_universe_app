@@ -17,8 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blueGrey, brightness: Brightness.dark),
+        brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,
       ),
       home: const HomeView(),

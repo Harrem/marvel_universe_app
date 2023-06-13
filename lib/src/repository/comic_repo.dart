@@ -24,4 +24,18 @@ class ComicRepo {
       rethrow;
     }
   }
+
+  /// get comics from api
+  Future<ComicList> getComicById(int id) async {
+    try {
+      final url = _apiService.baseUrl + _apiEndpoints.getComicById(id);
+      debugPrint("url is $url");
+      final response = await _apiService.getResponse(url) as Response<dynamic>;
+      // debugPrint("response is of type ${response.data}");
+      return ComicList.fromMap(response.data['data'] as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint("Got error in Repo while fetching Comics $e");
+      rethrow;
+    }
+  }
 }

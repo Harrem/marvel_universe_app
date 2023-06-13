@@ -9,10 +9,12 @@ import '../model/character_list/character_list.dart';
 class CharacterRepo {
   final BaseApiService _apiService = NetworkApiService();
   final ApiEndpoints _apiEndpoints = ApiEndpoints();
-  Future<CharacterList> getCharacters() async {
+
+  Future<CharacterList> getCharacters(int limit, int offset) async {
     try {
-      final response = await _apiService
-          .getResponse(_apiEndpoints.getCharacters(39, 6)) as Response<dynamic>;
+      final response = await _apiService.getResponse(
+              _apiService.baseUrl + _apiEndpoints.getCharacters(limit, offset))
+          as Response<dynamic>;
       // debugPrint("response is of type ${response.data}");
       return CharacterList.fromMap(
           response.data['data'] as Map<String, dynamic>);
